@@ -51,6 +51,8 @@ The config path is required. The application will not look for default files.
 ./termfolio --config termfolio.yaml
 ```
 
+![termfolio screenshot](./docs/screenshot.png)
+
 ## Configuration
 
 The YAML file defines languages and layers. Each layer has:
