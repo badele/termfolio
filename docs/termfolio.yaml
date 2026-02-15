@@ -1,0 +1,33 @@
+langs:
+  - code: fr
+    label: Français
+  - code: en
+    label: English
+
+layers:
+  - key: "D"
+    label:
+      fr: "Documentation"
+      en: "Documentation"
+    title:
+      fr: "Documentation termfolio"
+      en: "Termfolio Documentation"
+    cmd:
+      fr: "splitans -f neotex -F ansi docs/documentation-fr.neo"
+      en: "splitans -f neotex -F ansi docs/documentation-en.neo"
+  - key: "W"
+    label:
+      fr: "Météo"
+      en: "Weather"
+    title:
+      fr: "Méteo la plus proche"
+      en: "Nearest weather"
+    cmd:
+      fr: "sh -c 'set -euo pipefail; curl --fail -s --max-time 1 https://wttr.in/ | splitans -F ansi -W 104 || splitans -f neotex -F ansi docs/weather.neo'"
+  - key: "R"
+    label:
+      fr: "Rate sx"
+    title:
+      fr: "Rate sx"
+    cmd:
+      fr: "sh -c 'set -euo pipefail; curl --fail -s --max-time 1 https://eur.rate.sx/ | splitans -F ansi -W 104 || splitans -f neotex -F ansi docs/ratesx.neo'"
