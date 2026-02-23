@@ -1,9 +1,8 @@
-![termfolio logo](./docs/logo.png)
-
-<p align="center">
-——---- Multilingual TUI application for browsing and navigating
-ANSI text documents ----——
-</p>
+<div align="center">
+    <h1>
+        <img src="./docs/logo.png"/>
+    </h1>
+</div>
 
 ## Overview
 
