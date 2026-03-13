@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.0](https://github.com/badele/termfolio/compare/v0.3.0...v0.4.0) (2026-03-13)
+
+
+### Features
+
+* add help section config ([9aa4102](https://github.com/badele/termfolio/commit/9aa4102fda2b8b4d0d9aa9f1ebacccf334980887))
+* add help section config ([fe1cd52](https://github.com/badele/termfolio/commit/fe1cd525fe6934dd78172695d7ab0b5eb5e65376))
+* update neotex format ([1b9235d](https://github.com/badele/termfolio/commit/1b9235d6870586d518cb0f5bd117c7f30334baf6))
+* update neotex format ([b2b2663](https://github.com/badele/termfolio/commit/b2b26635ba49d0e2d10138ca0d0936d2e4199178))
+
 ## [0.3.0](https://github.com/badele/termfolio/compare/v0.2.0...v0.3.0) (2026-02-23)
 
 
