@@ -24,6 +24,7 @@ type Lang struct {
 type Layer struct {
 	Key   string            `yaml:"key"`
 	Cmd   map[string]string `yaml:"cmd"`
+	Help  map[string]string `yaml:"help"`
 	Title map[string]string `yaml:"title"`
 	Label map[string]string `yaml:"label"`
 }

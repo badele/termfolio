@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -59,6 +60,7 @@ type layerResultMsg struct {
 	index  int
 	output string
 	err    error
+	cmd    string
 }
 
 // Update handles user input and async results.
@@ -91,7 +93,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		headerHeight := 3 // Titre en haut
-		footerHeight := 3 // Menu en bas
+		footerHeight := 4 // Menu + aide en bas
 
 		if !m.ready {
 			m.viewport = viewport.New(msg.Width, msg.Height-headerHeight-footerHeight)
@@ -110,9 +112,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case layerResultMsg:
 		if msg.index >= 0 && msg.index < len(m.layerOutput) {
 			if msg.err != nil {
-				message := fmt.Sprintf("Erreur: %v", msg.err)
-				if strings.TrimSpace(msg.output) != "" {
-					message = message + "\n" + msg.output
+				message := fmt.Sprintf("Error: %v", msg.err)
+				cmdFile := layerCmdFile(msg.cmd)
+				if cmdFile != "" {
+					message = fmt.Sprintf("Error (%s): %v", cmdFile, msg.err)
+				}
+				output := msg.output
+				if strings.TrimSpace(output) != "" {
+					message = message + "\n" + output
 				}
 				m.layerOutput[msg.index] = message
 			} else {
@@ -138,8 +145,8 @@ func (m *Model) updateViewportContent() {
 		return
 	}
 	if m.currentLayer < len(m.layerOutput) {
-		output := strings.TrimSpace(m.layerOutput[m.currentLayer])
-		if output == "" {
+		output := m.layerOutput[m.currentLayer]
+		if len(output) == 0 {
 			output = "Aucune sortie"
 		}
 		m.setViewportContent(output)
@@ -157,6 +164,7 @@ func (m Model) View() string {
 		m.renderHeader(),
 		m.viewport.View(),
 		m.renderMenu(),
+		m.renderHelp(),
 	)
 }
 
@@ -282,6 +290,22 @@ func (m Model) renderMenu() string {
 	return "\n" + menu.String()
 }
 
+// renderHelp builds the help line under the menu.
+func (m Model) renderHelp() string {
+	help := m.layerHelp(m.currentLayer)
+	width := m.width
+	if width < 0 {
+		width = 0
+	}
+	if strings.TrimSpace(help) == "" {
+		return "\n"
+	}
+	if width > 0 && ansi.StringWidth(help) > width {
+		help = ansi.Truncate(help, width, "...")
+	}
+	return "\n" + help
+}
+
 // currentLangCode returns the selected language code.
 func (m Model) currentLangCode() string {
 	if len(m.langs) == 0 {
@@ -378,6 +402,15 @@ func (m Model) layerTitle(index int) string {
 	return m.layerLabel(layer, index)
 }
 
+// layerHelp returns the help line for a layer.
+func (m Model) layerHelp(index int) string {
+	if index < 0 || index >= len(m.layers) {
+		return ""
+	}
+
+	return m.localizedValue(m.layers[index].Help)
+}
+
 // layerIndexForKey maps a pressed key to a layer index.
 func (m Model) layerIndexForKey(key string) int {
 	for index, layer := range m.layers {
@@ -396,10 +429,10 @@ func (m Model) layerIndexForKey(key string) int {
 func runLayerCmd(cmd string, index int) tea.Cmd {
 	return func() tea.Msg {
 		if strings.TrimSpace(cmd) == "" {
-			return layerResultMsg{index: index, output: "", err: fmt.Errorf("commande vide")}
+			return layerResultMsg{index: index, output: "", err: fmt.Errorf("commande vide"), cmd: cmd}
 		}
 		output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
-		return layerResultMsg{index: index, output: strings.TrimRight(string(output), "\n"), err: err}
+		return layerResultMsg{index: index, output: string(output), err: err, cmd: cmd}
 	}
 }
 
@@ -407,6 +440,17 @@ func runLayerCmd(cmd string, index int) tea.Cmd {
 func (m *Model) setViewportContent(content string) {
 	m.viewport.SetContent(content)
 	m.hasOverflowX = hasHorizontalOverflow(content, m.viewport.Width-m.viewport.Style.GetHorizontalFrameSize())
+}
+
+var layerCmdFileRegex = regexp.MustCompile(`[^\s'"]+\.(?:neo|ansi|ans)`)
+
+// layerCmdFile extracts a file name from the command string.
+func layerCmdFile(cmd string) string {
+	matches := layerCmdFileRegex.FindAllString(cmd, -1)
+	if len(matches) == 0 {
+		return ""
+	}
+	return matches[len(matches)-1]
 }
 
 // hasHorizontalOverflow reports whether any line exceeds width.

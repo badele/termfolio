@@ -12,6 +12,9 @@ layers:
     title:
       fr: "Documentation termfolio"
       en: "Termfolio Documentation"
+    help:
+      fr: "\x1b[34mAide: \x1b[37mCe caractère \x1b[0m\x1b[33m »  \x1b[0m\x1b[37mindique un lien hypertexte\x1b[0m"
+      en: "\x1b[34mAide: \x1b[37mThis character \x1b[0m\x1b[33m »  \x1b[0m\x1b[37mindicate a hyperlink\x1b[0m"
     cmd:
       fr: "splitans -f neotex -F ansi docs/documentation-fr.neo"
       en: "splitans -f neotex -F ansi docs/documentation-en.neo"

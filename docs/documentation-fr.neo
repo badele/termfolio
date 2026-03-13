@@ -34,6 +34,7 @@ CONFIGURATION                                                                   
     - key: touche unique pour basculer vers le layer                                                                                                              | 
       label: libellé par langue affiché dans le pied de page                                                                                                      | 
       title: titre par langue affiché dans l'en-tête                                                                                                              | 
+      help: aide par langue affichée sous le menu                                                                                                                 | 
       cmd: commande shell par langue pour produire la sortie ANSI                                                                                                 | 
                                                                                                                                                                   | 
   Exemple:                                                                                                                                                        | 3:Fg; 11:R0
@@ -52,6 +53,9 @@ CONFIGURATION                                                                   
       title:                                                                                                                                                      | 
         fr: "Documentation termfolio"                                                                                                                             | 
         en: "Termfolio Documentation"                                                                                                                             | 
+      help:                                                                                                                                                       | 
+        fr: "\x1b[90mHelp: \x1b[0m\x1b[33m> \x1b[0m\x1b[37mLiens cliquables\x1b[0m"                                                                               | 
+        en: "\x1b[90mHelp: \x1b[0m\x1b[33m> \x1b[0m\x1b[37mClickable links\x1b[0m"                                                                                | 
       cmd:                                                                                                                                                        | 
         fr: "splitans -f neotex -F ansi docs/documentation-fr.neo"                                                                                                | 
         en: "splitans -f neotex -F ansi docs/documentation-en.neo"                                                                                                | 
