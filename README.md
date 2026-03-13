@@ -59,6 +59,7 @@ The YAML file defines languages and layers. Each layer has:
 - `key`: single key used to switch to the layer
 - `label`: per-language label shown in the footer
 - `title`: per-language title shown in the header
+- `help`: per-language help line shown under the menu
 - `cmd`: per-language shell command to produce ANSI output
 
 Example:
@@ -78,6 +79,9 @@ layers:
     title:
       fr: "Documentation termfolio"
       en: "Termfolio Documentation"
+    help:
+      fr: "\x1b[34mAide: \x1b[37mCe caractère \x1b[0m\x1b[33m »  \x1b[0m\x1b[37mindique un lien hypertexte\x1b[0m"
+      en: "\x1b[34mAide: \x1b[37mThis character \x1b[0m\x1b[33m »  \x1b[0m\x1b[37mindicate a hyperlink\x1b[0m"
     cmd:
       fr: "splitans -f neotex -F ansi docs/documentation-fr.neo"
       en: "splitans -f neotex -F ansi docs/documentation-en.neo"
