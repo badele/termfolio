@@ -29,7 +29,7 @@ WORKDIR /work
 COPY --from=builder /app/termfolio /usr/local/bin/termfolio
 
 # Set entrypoint
-ENTRYPOINT ["splitans"]
+ENTRYPOINT ["termfolio"]
 
 # Default arguments (can be overridden)
 CMD []

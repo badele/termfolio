@@ -29,7 +29,7 @@ type Model struct {
 }
 
 // NewModel builds a model from the config.
-func NewModel(cfg *config.Config) Model {
+func NewModel(cfg *config.Config, preferredLang string) Model {
 	model := Model{}
 
 	if cfg != nil {
@@ -44,7 +44,28 @@ func NewModel(cfg *config.Config) Model {
 		}
 	}
 
+	model.applyPreferredLang(preferredLang)
+
 	return model
+}
+
+func (m *Model) applyPreferredLang(preferredLang string) {
+	if len(m.langs) == 0 {
+		return
+	}
+	langCode := strings.TrimSpace(preferredLang)
+	if langCode == "" {
+		langCode = "fr"
+	}
+	for index, lang := range m.langs {
+		if strings.EqualFold(strings.TrimSpace(lang.Code), langCode) {
+			m.currentLangIndex = index
+			return
+		}
+	}
+	if m.currentLangIndex < 0 || m.currentLangIndex >= len(m.langs) {
+		m.currentLangIndex = 0
+	}
 }
 
 // Init runs initial commands for the model.
@@ -193,6 +214,9 @@ func (m Model) renderMenu() string {
 	langStyle := lipgloss.NewStyle().
 		Background(lipgloss.Color("5")).
 		Foreground(lipgloss.Color("15"))
+	directionStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("1")).
+		Foreground(lipgloss.Color("15"))
 	truncateWithEllipsis := func(text string, width int) string {
 		if width <= 0 {
 			return ""
@@ -204,8 +228,10 @@ func (m Model) renderMenu() string {
 	}
 
 	type menuBlock struct {
-		key   string
-		label string
+		key         string
+		label       string
+		isLang      bool
+		isDirection bool
 	}
 
 	var menuItems []menuBlock
@@ -224,13 +250,13 @@ func (m Model) renderMenu() string {
 		langLabel = m.currentLangCode()
 	}
 	if langLabel != "" {
-		blocks = append(blocks, menuBlock{key: "L", label: langLabel})
+		blocks = append(blocks, menuBlock{key: "L", label: langLabel, isLang: true})
 	}
 	if m.viewport.TotalLineCount() > m.viewport.VisibleLineCount() {
-		blocks = append(blocks, menuBlock{key: " ", label: "haut/bas"})
+		blocks = append(blocks, menuBlock{key: " ", label: "haut/bas", isDirection: true})
 	}
 	if m.hasOverflowX {
-		blocks = append(blocks, menuBlock{key: " ", label: "gauche/droite"})
+		blocks = append(blocks, menuBlock{key: " ", label: "gauche/droite", isDirection: true})
 	}
 
 	blockCount := len(blocks)
@@ -281,8 +307,10 @@ func (m Model) renderMenu() string {
 		}
 		labelText = truncateWithEllipsis(labelText, labelWidth)
 		currentLabelStyle := labelStyle
-		if block.key == "L" {
+		if block.isLang {
 			currentLabelStyle = langStyle
+		} else if block.isDirection {
+			currentLabelStyle = directionStyle
 		}
 		menu.WriteString(currentLabelStyle.Width(labelWidth).Render(labelText))
 	}
