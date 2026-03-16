@@ -14,6 +14,7 @@ import (
 func main() {
 	// Parse the optional config flag and start the TUI.
 	configPath := flag.String("config", "", "Path to the YAML config file")
+	langCode := flag.String("lang", "", "Preferred language code (default: fr)")
 	flag.Parse()
 
 	loadedConfig, err := loadConfig(*configPath)
@@ -22,7 +23,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	p := tea.NewProgram(ui.NewModel(loadedConfig), tea.WithAltScreen())
+	p := tea.NewProgram(ui.NewModel(loadedConfig, *langCode), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error: %v", err)
 		os.Exit(1)

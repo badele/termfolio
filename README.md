@@ -48,6 +48,22 @@ The config path is required. The application will not look for default files.
 
 ```bash
 ./termfolio --config termfolio.yaml
+
+# Optional: choose the initial language
+./termfolio --config termfolio.yaml --lang en
+```
+
+Default language is `fr` when `--lang` is omitted (fallback to the first
+configured language if `fr` is not present).
+
+Docker example (entrypoint: `termfolio --config /work/termfolio.yaml "$@"`):
+
+```bash
+docker run --rm -it \
+  -v "$(pwd)/termfolio.yaml:/work/termfolio.yaml" \
+  badele/termfolio \
+  -- config /work/termfolio.yaml \
+  --lang fr
 ```
 
 ![termfolio screenshot](./docs/screenshot.png)
