@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/badele/termfolio/compare/v0.4.0...v0.5.0) (2026-03-16)
+
+
+### Features
+
+* update menu ([de6f98e](https://github.com/badele/termfolio/commit/de6f98edf3fa07c18ba7775b324d03a7fa4c016e))
+* update menu ([277faf9](https://github.com/badele/termfolio/commit/277faf97895bd1fbfdfd46e5d27be4584f4becfc))
+
 ## [0.4.0](https://github.com/badele/termfolio/compare/v0.3.0...v0.4.0) (2026-03-13)
 
 
