@@ -481,12 +481,45 @@ func (m *Model) setViewportContent(content string) {
 	// Detect horizontal overflow on original content before padding.
 	m.hasOverflowX = hasHorizontalOverflow(content, vpWidth)
 
+	// Propagate ANSI SGR state across lines so that each line is self-contained.
+	// This is necessary because the viewport renders lines independently through
+	// lipgloss, which resets ANSI state between lines.
+	content = propagateANSIState(content)
+
 	// Pad lines with background color so the entire viewport area is filled.
 	if m.backgroundColor != "" && vpWidth > 0 {
 		content = m.padContentLines(content, vpWidth)
 	}
 
 	m.viewport.SetContent(content)
+}
+
+// sgrRegex matches SGR (Select Graphic Rendition) ANSI escape sequences.
+var sgrRegex = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
+// propagateANSIState ensures each line carries the cumulative ANSI SGR state
+// from previous lines so that colors are preserved when lines are rendered
+// independently (e.g. by the viewport/lipgloss pipeline which resets state
+// between lines).
+func propagateANSIState(content string) string {
+	content = strings.ReplaceAll(content, "\r\n", "\n")
+	lines := strings.Split(content, "\n")
+	var carry string
+	for i, line := range lines {
+		if carry != "" {
+			lines[i] = carry + line
+		}
+		// Collect all SGR sequences on this line to build the carry state.
+		matches := sgrRegex.FindAllString(line, -1)
+		for _, m := range matches {
+			if m == "\x1b[0m" || m == "\x1b[m" {
+				carry = ""
+			} else {
+				carry += m
+			}
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 // padContentLines pads each line of content with the background color
