@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/badele/termfolio/compare/v0.5.0...v0.6.0) (2026-03-17)
+
+
+### Features
+
+* set default background color ([#9](https://github.com/badele/termfolio/issues/9)) ([edce3f9](https://github.com/badele/termfolio/commit/edce3f9d7cb4c5df0856efd1f20eef09175839a4))
+
 ## [0.5.0](https://github.com/badele/termfolio/compare/v0.4.0...v0.5.0) (2026-03-16)
 
 
