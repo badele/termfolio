@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/badele/termfolio/compare/v0.6.0...v0.6.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* ansi-viewver ([#11](https://github.com/badele/termfolio/issues/11)) ([54a7f15](https://github.com/badele/termfolio/commit/54a7f156cbd54b9e43d53e44593a14fe1d3cdff4))
+
 ## [0.6.0](https://github.com/badele/termfolio/compare/v0.5.0...v0.6.0) (2026-03-17)
 
 
