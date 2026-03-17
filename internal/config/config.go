@@ -10,8 +10,9 @@ import (
 
 // Config holds the CV configuration.
 type Config struct {
-	Langs  []Lang  `yaml:"langs"`
-	Layers []Layer `yaml:"layers"`
+	BackgroundColor string  `yaml:"background_color"`
+	Langs           []Lang  `yaml:"langs"`
+	Layers          []Layer `yaml:"layers"`
 }
 
 // Lang defines an available language.

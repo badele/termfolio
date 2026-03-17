@@ -26,6 +26,7 @@ type Model struct {
 	width            int
 	height           int
 	ready            bool
+	backgroundColor  string
 }
 
 // NewModel builds a model from the config.
@@ -41,6 +42,9 @@ func NewModel(cfg *config.Config, preferredLang string) Model {
 			model.layerOutput = make([]string, len(cfg.Layers))
 			model.layerOutput[0] = "Chargement..."
 			model.currentLayer = 0
+		}
+		if strings.TrimSpace(cfg.BackgroundColor) != "" {
+			model.backgroundColor = strings.TrimSpace(cfg.BackgroundColor)
 		}
 	}
 
@@ -124,6 +128,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.viewport.Width = msg.Width
 			m.viewport.Height = msg.Height - headerHeight - footerHeight
+		}
+
+		if m.backgroundColor != "" {
+			m.viewport.Style = lipgloss.NewStyle().
+				Background(lipgloss.Color(m.backgroundColor)).
+				Width(msg.Width)
 		}
 
 		m.width = msg.Width
@@ -466,8 +476,33 @@ func runLayerCmd(cmd string, index int) tea.Cmd {
 
 // setViewportContent updates the viewport and overflow state.
 func (m *Model) setViewportContent(content string) {
+	vpWidth := m.viewport.Width - m.viewport.Style.GetHorizontalFrameSize()
+
+	// Detect horizontal overflow on original content before padding.
+	m.hasOverflowX = hasHorizontalOverflow(content, vpWidth)
+
+	// Pad lines with background color so the entire viewport area is filled.
+	if m.backgroundColor != "" && vpWidth > 0 {
+		content = m.padContentLines(content, vpWidth)
+	}
+
 	m.viewport.SetContent(content)
-	m.hasOverflowX = hasHorizontalOverflow(content, m.viewport.Width-m.viewport.Style.GetHorizontalFrameSize())
+}
+
+// padContentLines pads each line of content with the background color
+// so that short lines are filled to the viewport width.
+func (m *Model) padContentLines(content string, vpWidth int) string {
+	bgStyle := lipgloss.NewStyle().Background(lipgloss.Color(m.backgroundColor))
+	content = strings.ReplaceAll(content, "\r\n", "\n")
+	lines := strings.Split(content, "\n")
+	for i, line := range lines {
+		lineWidth := ansi.StringWidth(line)
+		if lineWidth < vpWidth {
+			padding := strings.Repeat(" ", vpWidth-lineWidth)
+			lines[i] = line + bgStyle.Render(padding)
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 var layerCmdFileRegex = regexp.MustCompile(`[^\s'"]+\.(?:neo|ansi|ans)`)
